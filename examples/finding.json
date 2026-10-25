@@ -1,1 +1,16 @@
-{"title":"t","description":"d","poc":"p","impact":"i","remediation":"r","cvss_vector":"CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H","cvss_base":9.8,"claimed_severity":"CRITICAL"}
+{
+  "title": "IDOR on GET /api/orders/{id} exposes other customers' orders",
+  "description": "The order endpoint checks that the caller is authenticated but never checks that the requested order belongs to the caller. Any authenticated customer can read any other customer's order by changing the id path parameter.",
+  "poc": "1. Register two accounts (A and B) on https://app.example.test\n2. As A, create an order and note its id (e.g. 42)\n3. As B, capture an authenticated request:\n```curl\ncurl -i -H 'Cookie: sid=<B session>' \\\n  https://app.example.test/api/orders/42\n```\n4. Observe HTTP 200 with A's order body (email, address, line items) returned to B\n5. Repeat with sequential ids to enumerate orders",
+  "impact": "Any authenticated customer can read any other customer's order history, including shipping addresses and contact details. Roughly 100% of order objects are exposed to any logged-in user.",
+  "remediation": "Enforce object-level authorization on every order lookup: load the order scoped to the caller's account id and return 404 when the row does not belong to the caller. Add a regression test that replays A's request as B.",
+  "severity": "MEDIUM",
+  "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+  "cvss_base": 5.3,
+  "scope": "app.example.test (web app, authenticated customers)",
+  "timeline": "2026-10-25 reported, 2026-10-25 acknowledged, fix pending",
+  "references": [
+    "https://owasp.org/www-community/attacks/Insecure_Direct_Object_Reference",
+    "https://portswigger.net/web-security/access-control/idor"
+  ]
+}

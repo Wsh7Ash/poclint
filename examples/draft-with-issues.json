@@ -1,0 +1,9 @@
+{
+  "title": "Reflected XSS in search",
+  "description": "The q parameter is echoed back into the page without encoding. This fix is guaranteed to be production-ready once deployed.",
+  "poc": "just try it",
+  "impact": "",
+  "severity": "SEVERE",
+  "cvss_vector": "AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+  "cvss_base": 9.8
+}
